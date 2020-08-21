@@ -1,56 +1,93 @@
 [![GitHub release](https://img.shields.io/github/release/jm-73/Indego.svg)](https://GitHub.com/jm-73/Indego/releases/) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
 # Indego
+Join the Discord channel to discuss around this integration and vote for your favourite change to happen!
+https://discord.gg/aD33GsP
+
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
-![Entities in Home Asistant](/doc/0-Indego_sensors.png)
+![Entities in Home Asistant](/doc/0-Sensors_3.png)
 
 ## Installation
+
 ### Alternative 1
-Install via HACS Community Store: https://hacs.netlify.com/
+Install via HACS Community Store: https://hacs.xyz/
 ### Alternative 2
 Copy the folder `indego` in `custom_components` into your `custom_components` in your Home Assistant.
-    
+
+## Reboot
+Reboot HA in order to get HA to find the newly added custom component.
+
 ## Configuration
-Add the domain to your configuration.yaml
+Add the domain to your configuration.yaml. Username, password and id (serial) is mandatory. Name (default = Indego) and polling (default = false) is optional.
 ``` yaml
 #configuration.yaml
 indego:
-  name:     Indego
+#Required
   username: !secret indego_username
   password: !secret indego_password
   id:       !secret indego_id
+#Optional
+  name:     Indego
 ```
 
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
 ``` yaml
 #secrets.yaml
-indego_username: name@mail.com
-indego_password: mysecretpw
-indego_id:       123456789
+indego_username: "name@mail.com"
+indego_password: "mysecretpw"
+indego_id:       "123456789"
 ```
 ## Usage
 
 ### Entities
- All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
+ All sensors are auto discovered and should appear as "unused entities" after adding the component.
 
-![Mower State](/doc/1-Indego_mower_state.png)        ![Mower State](/doc/2-Indego_mower_state_detail.png)
-![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          ![Runtime Total](/doc/4-Indego_runtime_total.png)
-![Battery sensor percent](/doc/5-Indego_battery.png) ![Battery sensor volt](/doc/6-Indego_battery_v.png)
-![Battery sensor](/doc/7-Indego_alert.png)
+| Description | Screenshot |
+|-------------|------------|
+| <img width=400/> | <img width=325/> |
+***Mower state***<br>Shows state of the mower. | ![State](/doc/1-State_3.png)
+***Mower state detail***<br>Shows detailed state of the mower. | ![State Detail](/doc/2-StateDetail_1.png)
+***Lawn mowed***<br>Shows percentage of lawn mowed. | ![Lawn mowed](/doc/3-LawnMowed_3.png)
+***Total mowing time***<br>Shows the total mowing time for the mower. | ![Mowtime total](/doc/4-MowTime_3.png)
+***Battery***<br>Shows the status of the battery. | ![Battery sensor percent](/doc/5-Battery_3.png)
+***Alerts***<br>Shows all alerts | ![Alerts sensor](/doc/7-Alerts_3.png)
+***Last completed mow***<br>Shows when the lawn was completed last time. | ![Last mow](/doc/8-LastCompleted_3.png)
+***Next mow time***<br>Show the next planned mow. | ![Next mow](/doc/9-NextMow_3.png)
+***Mowing mode***<br>Shows the mowing mode set. | ![Mowing mode](/doc/10-MowingMode_2.png)
+***Online***<br>Shows if the mower is online/offline/sleeping. Possble values:<br> *True, False* | ![Online status](/doc/11-Online_3.png)
+***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *On, Off* | ![Update available](/doc/12-Update_4.png)
 
-### Service
-There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
 
-|Command      |Description           |
+
+## Service
+
+### indego.command ####
+Sends a command to the mower. Example code:<br>
+`command: mow`
+
+Accepted values are:
+|Command         |Description           |
+|----------------|----------------------|
+| `mow`          | Start/continue mowing|
+| `pause`        | Pause mower          |
+| `returnToDock` | Return mower to dock |
+
+![Services](/doc/S1-Command1.png)
+
+### indego.smartmowing ####
+Changes mowing mode. Example:<br>
+`enable: true`
+
+Accepted values are:
+|value        |Description           |
 |-------------|----------------------|
-|mow          | Start/continue mowing|
-|pause        | Pause mower          |
-|returnToDock | Return mower to dock |
+| `true`      | SmartMowing enabled  |
+| `false`     | SmartMowing disabled |
 
-Example creating automation in HA gui:
 
-![Services](/doc/8-Indego_call_service.png)
+## Examples
+Creating automation in HA gui:
 
 Example for automations.yaml:
 
@@ -65,7 +102,7 @@ Example for automations.yaml:
   action:
   - data:
       command: mow
-    service: indego.mower_command
+    service: indego.command
 ```
 
 ## Debugging
@@ -73,9 +110,10 @@ To get debug logs from the component in your log file, specify theese options in
 
 ``` yaml
 #configuration.yaml
-logger:
-  logs:
-    custom_components.indego: debug
+logger: 
+  default: critical 
+  logs: 
+    custom_components.indego: debug 
 ```
 
 To get debug logs from the python API library in your log file, add this line to your configuration file in additon to the lines above:
@@ -92,13 +130,25 @@ If you experience issues/bugs with this the best way to report them is to open a
 
 [Issue link](https://github.com/jm-73/Indego/issues)
 
+
 ## Credits
 
 ### Thanks to
-onkelfarmor ltjessem nsimb jjandersson shamshala nath
+[Eduard](https://github.com/eavanvalkenburg)
+[Jumper78](https://github.com/Jumper78)
+[dykandDK](https://github.com/dykandDK)
+[ultrasub](https://github.com/UltraSub)
+[Gnol86](https://github.com/Gnol86)
+naethan bekkm onkelfarmor ltjessem nsimb jjandersson
+[Shamshala](https://github.com/Shamshala)
+nath
+[bekkm](https://github.com/bekkm)
+[urbatecte](https://github.com/urbatecte)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
 Inspiration from http://grauonline.de/wordpress/?page_id=219
 
 Inspiration from https://github.com/jofleck/iot-device-bosch-indego-controller
+
+<a href="https://www.buymeacoffee.com/jm73" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
